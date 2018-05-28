@@ -26,6 +26,7 @@ def get_mc_balance():
     try:
         r = requests.get('http://localhost:8085/wallets/MC/balance')
         balance = r.json()
+        print("balance: %s" % balance)
         return balance['balance']['available']
     except ConnectionError:
         return False

@@ -51,6 +51,7 @@ apt-get install -y \
     python-networkx \
     python-scipy \
     python-wxtools \
+    python-meliae \
     git \
     python-lxml
 
