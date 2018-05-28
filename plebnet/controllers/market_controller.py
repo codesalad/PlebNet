@@ -24,9 +24,8 @@ def is_market_running():
 def get_mc_balance():
     logger.log('The market is running: ' + str(is_market_running()), "get balance")
     try:
-        r = requests.get('http://localhost:8085/wallets/MC/balance')
+        r = requests.get('http://localhost:8085/wallets/MB/balance')
         balance = r.json()
-        print("balance: %s" % balance)
         return balance['balance']['available']
     except ConnectionError:
         return False

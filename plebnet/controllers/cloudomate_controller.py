@@ -175,13 +175,13 @@ def place_offer(chosen_est_price, config):
     """
     available_mc = market_controller.get_mc_balance()
     if available_mc == 0:
-        logger.log("No MC available")
+        logger.log("No MB available")
         return False
     config.bump_offer_date()
-    config.set('last_offer', {'BTC': chosen_est_price, 'MC': available_mc})
-    price_per_unit = chosen_est_price / float(available_mc)
+    config.set('last_offer', {'BTC': chosen_est_price, 'MB': available_mc})
+    price_per_unit = max(0.0001, chosen_est_price / float(available_mc))
     return market_controller.put_ask(price=price_per_unit,
                                      price_type='BTC',
                                      quantity=available_mc,
-                                     quantity_type='MC',
+                                     quantity_type='MB',
                                      timeout=plebnet_settings.TIME_IN_HOUR)

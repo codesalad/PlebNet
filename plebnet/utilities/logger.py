@@ -65,7 +65,6 @@ def error(msg, method=""):
 
 def _get_logger(name=settings.logger_filename()):
     logger = logging.getLogger(name)
-
     if not logger.handlers:
 
         logger.setLevel(logging.INFO)
