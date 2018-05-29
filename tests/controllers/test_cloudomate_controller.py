@@ -1,7 +1,8 @@
 import os
 import unittest
 
-import cloudomate.hoster.vps.blueangelhost as provider
+import cloudomate.hoster.vps.blueangelhost as blueAngel
+import cloudomate.hoster.vps.linevast as linevast
 import cloudomate.gateway.coinbase as Coinbase
 from cloudomate import wallet as wallet_util
 from cloudomate.hoster.vps.clientarea import ClientArea
@@ -18,6 +19,12 @@ from plebnet.utilities import logger as Logger
 
 
 class TestCloudomateController(unittest.TestCase):
+
+    class Price(object):
+        def __init__(self, me):
+            self.price = me
+
+        price = 0
 
     def test_child_account(self):
         self.cloudomate_settings = Settings.__init__
@@ -55,14 +62,14 @@ class TestCloudomateController(unittest.TestCase):
 
     def test_status(self):
         self.child_account = cloudomate.child_account
-        self.provider = provider.BlueAngelHost.get_status
+        self.provider = blueAngel.BlueAngelHost.get_status
 
         cloudomate.child_account = MagicMock()
-        provider.BlueAngelHost.get_status = MagicMock()
-        assert cloudomate.status(provider.BlueAngelHost)
+        blueAngel.BlueAngelHost.get_status = MagicMock()
+        assert cloudomate.status(blueAngel.BlueAngelHost)
 
         cloudomate.child_account = self.child_account
-        provider.BlueAngelHost.get_status = self.provider
+        blueAngel.BlueAngelHost.get_status = self.provider
 
     def test_get_ip(self):
         self.clientarea = ClientArea.__init__
@@ -75,7 +82,7 @@ class TestCloudomateController(unittest.TestCase):
         ClientArea.get_services = MagicMock()
         ClientArea.get_ip = MagicMock()
 
-        cloudomate.get_ip(provider.BlueAngelHost)
+        cloudomate.get_ip(blueAngel.BlueAngelHost)
         ClientArea.get_ip.assert_called_once()
 
         ClientArea.__init__ = self.clientarea
@@ -84,11 +91,11 @@ class TestCloudomateController(unittest.TestCase):
         ClientArea.get_ip = self.clientarea_ip
 
     def test_options(self):
-        self.provider = provider.BlueAngelHost.get_options
-        provider.BlueAngelHost.get_options = MagicMock()
-        cloudomate.options(provider.BlueAngelHost)
-        provider.BlueAngelHost.get_options.assert_called_once()
-        provider.BlueAngelHost.get_options = self.provider
+        self.provider = blueAngel.BlueAngelHost.get_options
+        blueAngel.BlueAngelHost.get_options = MagicMock()
+        cloudomate.options(blueAngel.BlueAngelHost)
+        blueAngel.BlueAngelHost.get_options.assert_called_once()
+        blueAngel.BlueAngelHost.get_options = self.provider
 
     def test_get_network_fee(self):
         self.wallet_util = wallet_util.get_network_fee
@@ -100,42 +107,57 @@ class TestCloudomateController(unittest.TestCase):
     def test_pick_providers(self):
         self.DNA = DNA.DNA.choose_provider
         self.vps = cloudomate.get_vps_providers
-        self.get_gateway = provider.BlueAngelHost.get_gateway
+        self.get_gateway = blueAngel.BlueAngelHost.get_gateway
         self.estimate_price = Coinbase.Coinbase.estimate_price
         self.pick_options = cloudomate.pick_option
         self.get_price = wallet_util.get_price
         self.get_fee = wallet_util.get_network_fee
 
         DNA.DNA.choose_provider = MagicMock()
-        cloudomate.get_vps_providers = MagicMock(return_value=[provider.BlueAngelHost, provider.BlueAngelHost])
-        provider.BlueAngelHost.get_gateway = MagicMock()
+        cloudomate.get_vps_providers = MagicMock(return_value=[blueAngel.BlueAngelHost, blueAngel.BlueAngelHost])
+        blueAngel.BlueAngelHost.get_gateway = MagicMock()
         Coinbase.Coinbase.estimate_price = MagicMock()
         cloudomate.pick_option = MagicMock(return_value=[1, 2, 3])
         wallet_util.get_price = MagicMock()
         wallet_util.get_network_fee = MagicMock()
 
         cloudomate.pick_provider(list)
-        provider.BlueAngelHost.get_gateway.assert_called_once()
+        blueAngel.BlueAngelHost.get_gateway.assert_called_once()
 
         DNA.DNA.choose_provider = self.DNA
         cloudomate.get_vps_providers = self.vps
-        provider.BlueAngelHost.get_gateway = self.get_gateway
+        blueAngel.BlueAngelHost.get_gateway = self.get_gateway
         Coinbase.Coinbase.estimate_price = self.estimate_price
         cloudomate.pick_option = self.pick_options
         wallet_util.get_price = self.get_price
         wallet_util.get_network_fee = self.get_fee
 
-    def test_pick_otpions(self):
+    def test_pick_otpions_zero(self):
         self.options = cloudomate.options
         self.providers = cloudomate_providers
 
         cloudomate.options = MagicMock()
         cloudomate_providers.__init__= MagicMock()
-        print cloudomate.pick_option('BlueAngelHost')
+        cloudomate.pick_option('BlueAngelHost')
         cloudomate.options.assert_called_once()
 
         cloudomate.options = self.options
         cloudomate_providers.__init__ = self.providers
+
+    def test_pick_options(self):
+        self.options = cloudomate.options
+        self.providers = cloudomate_providers
+        self.linevast = linevast.LineVast
+
+        cloudomate.options = MagicMock(return_value=[self.Price(2), self.Price(5), self.Price(1)])
+        cloudomate_providers.__init__ = MagicMock()
+
+
+        cloudomate.pick_option('BlueAngelHost')
+
+    def test_update_offer(self):
+
+
 
     #def test_setrootpw(self):
     #    self.clientare = cloudomate.child_account
