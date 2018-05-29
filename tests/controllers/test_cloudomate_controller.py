@@ -131,8 +131,11 @@ class TestCloudomateController(unittest.TestCase):
 
         cloudomate.options = MagicMock()
         cloudomate_providers.__init__= MagicMock()
-        print cloudomate.pick_option('Test')
+        print cloudomate.pick_option('BlueAngelHost')
+        cloudomate.options.assert_called_once()
 
+        cloudomate.options = self.options
+        cloudomate_providers.__init__ = self.providers
 
     #def test_setrootpw(self):
     #    self.clientare = cloudomate.child_account
