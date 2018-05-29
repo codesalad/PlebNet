@@ -9,7 +9,7 @@
 #
 # It creates a connection, copies the agent specific files (DNA) and
 # pulls the latest version of PlebNet from a Git repo. Then it runs
-# the installation script provided by the latests version.
+# the installation script provided by the latest version.
 #
 
 IP=$1

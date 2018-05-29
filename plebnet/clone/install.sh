@@ -84,8 +84,8 @@ pip install pyaes psutil
 
 cd $HOME
 [ ! -d "PlebNet" ] && git clone -b master https://github.com/vwigmore/PlebNet
-[ ! -d "Cloudomate" ] && git clone -b master https://github.com/codesalad/Cloudomate
-python -m pip install --upgrade ./Cloudomate
+[ ! -d "cloudomate" ] && git clone -b master https://github.com/codesalad/cloudomate
+python -m pip install --upgrade ./cloudomate
 python -m pip install --upgrade ./PlebNet
 cd PlebNet
 git submodule update --init --recursive tribler
