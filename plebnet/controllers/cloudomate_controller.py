@@ -65,11 +65,11 @@ def get_ip(provider):
     logger.log('client area: %s' % client_area.get_services())
     return client_area.get_ip()
 
-
+#TODO .set_rootpw does not exist
 def setrootpw(provider, password):
     settings = child_account()
     settings.put('server', 'root_password', password)
-    # return provider.set_rootpw(settings)
+    return provider.set_rootpw(settings)
 
 
 def options(provider):

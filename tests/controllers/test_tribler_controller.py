@@ -42,7 +42,7 @@ class TestTriblerController(unittest.TestCase):
         self.true_subprocess_call = subprocess.call
         self.true_logger_error = logger.error
 
-        subprocess.call = MagicMock(side_effect=subprocess.CalledProcessError(returncode=2,cmd=['bad']))
+        subprocess.call = MagicMock(side_effect=subprocess.CalledProcessError(returncode=2, cmd=['bad']))
         logger.error = MagicMock()
         self.assertFalse(Tribler.start())
 
