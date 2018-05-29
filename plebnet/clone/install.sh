@@ -26,6 +26,8 @@ apt-get install openssl
 apt-get install -y python-pip
 pip install -U pip wheel setuptools
 
+apt-get install sudo
+
 # Install dependencies
 apt-get install -y \
     python-crypto \
