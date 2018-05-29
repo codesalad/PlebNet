@@ -85,7 +85,7 @@ echo "done upgrading pip"
 pip install pyaes psutil
 
 cd $HOME
-[ ! -d "PlebNet" ] && git clone -b master https://github.com/vwigmore/PlebNet
+[ ! -d "PlebNet" ] && git clone -b prox_test https://github.com/vwigmore/PlebNet
 [ ! -d "cloudomate" ] && git clone -b master https://github.com/codesalad/cloudomate
 python -m pip install --upgrade ./cloudomate
 python -m pip install --upgrade ./PlebNet
