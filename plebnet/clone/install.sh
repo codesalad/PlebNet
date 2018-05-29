@@ -54,8 +54,8 @@ apt-get install -y \
     git \
     python-lxml
 
-if [ $(lsb_release -cs) == "trusty" ]
-then
+# if [ $(lsb_release -cs) == "trusty" ]
+# then
     echo "Trusty detected"
     apt-get install -y build-essential libssl-dev libffi-dev python-dev software-properties-common
     pip install cryptography
@@ -67,13 +67,13 @@ then
     echo "deb http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list;
     echo "deb-src http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list;
     apt-get update && apt-get install -y libsodium-dev;
-else
+# else
     apt-get install -y python-cryptography \
 	python-nacl \
 	python-libnacl \
 	python-socks \
 	keyrings.alt
-fi
+# fi
 
 # Update pip to avoid locale errors in certain configurations
 echo "upgrading pip"
