@@ -12,7 +12,7 @@ import time
 from plebnet.agent.dna import DNA
 from plebnet.agent.config import PlebNetConfig
 from plebnet.clone import server_installer
-from plebnet.controllers import tribler_controller, cloudomate_controller, market_controller, wallet_controller
+from plebnet.controllers import tribler_controller, cloudomate_controller, market_controller, electrum_controller
 from plebnet.communication.irc import irc_handler
 from plebnet.settings import plebnet_settings
 from plebnet.utilities import logger, fake_generator
@@ -29,9 +29,7 @@ def setup(args):
 
     # Prepare Cloudomate
     if args.test_net:
-        settings.wallets_testnet("1")
-        settings.settings.write()
-
+        logger.warning("should use fake money, but not implemented yet", "setup")
     fake_generator.generate_child_account()
 
     # TODO: change --> Prepare plebnet
@@ -43,6 +41,9 @@ def setup(args):
     dna = DNA()
     dna.read_dictionary(cloudomate_controller.get_vps_providers())
     dna.write_dictionary()
+
+    # Prepare Electrum
+    electrum_controller.create_wallet()
 
     # Prepare the IRC Client
     irc_handler.init_irc_client()
@@ -72,32 +73,10 @@ def check():
     if not check_tunnel_helper():
         return
 
-    # Prepare Cloudomate
-    if not settings.wallets_initiate_once():
-        create_wallet()
-
     select_provider()
     update_offer()
     attempt_purchase()
     install_vps()
-
-
-def create_wallet():
-    if settings.wallets_testnet():
-        # attempt to create testnet wallet
-        logger.log("create Testnet wallet", "setup")
-        x = wallet_controller.create_wallet('TBTC')
-        if x:
-            settings.wallets_testnet_created("1")
-            settings.wallets_initiate_once("1")
-            settings.settings.write()
-    else:
-        # attempt to create bitcoin wallet
-        y = wallet_controller.create_wallet('BTC')
-        if y:
-            settings.wallets_initiate_once("1")
-            settings.settings.write()
-
 
 
 def check_tribler():
@@ -126,7 +105,7 @@ def check_tunnel_helper():
         env = os.environ.copy()
         env['PYTHONPATH'] = settings.tribler_home()
         try:
-            subprocess.call(['twistd', '--pidfile='+settings.tunnelhelper_pid(), 'tunnel_helper', '-x'], #, '-M'],
+            subprocess.call(['twistd', '--pidfile='+settings.tunnelhelper_pid(), 'tunnel_helper', '-x', '-M'],
                             cwd=settings.tribler_home(), env=env)
             return True
         except subprocess.CalledProcessError as e:
@@ -157,7 +136,7 @@ def attempt_purchase():
     """
     # try to purchase the chosen vps.
     (provider, option, _) = config.get('chosen_provider')
-    if market_controller.get_balance('BTC') >= cloudomate_controller.calculate_price(provider, option):
+    if market_controller.get_btc_balance() >= cloudomate_controller.calculate_price(provider, option):
         logger.log("Try to buy a new server from %s" % provider, log_name)
         success = cloudomate_controller.purchase_choice(config)
         if success == plebnet_settings.SUCCESS:

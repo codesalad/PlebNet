@@ -13,13 +13,13 @@ import os
 from appdirs import user_config_dir
 
 from cloudomate import wallet as wallet_util
+from cloudomate.wallet import Wallet
 from cloudomate.cmdline import providers as cloudomate_providers
 from cloudomate.hoster.vps.clientarea import ClientArea
 from cloudomate.util.settings import Settings as AccountSettings
 
 from plebnet.agent.config import PlebNetConfig
 from plebnet.controllers import market_controller
-from plebnet.controllers.wallet_controller import TriblerWallet
 from plebnet.settings import plebnet_settings
 from plebnet.utilities import logger, fake_generator
 from plebnet.agent.dna import DNA
@@ -69,7 +69,7 @@ def get_ip(provider):
 def setrootpw(provider, password):
     settings = child_account()
     settings.put('server', 'root_password', password)
-    return provider.set_rootpw(settings)
+    # return provider.set_rootpw(settings)
 
 
 def options(provider):
@@ -142,7 +142,7 @@ def purchase_choice(config):
     PlebNetConfig().increment_child_index()
     fake_generator.generate_child_account()
 
-    wallet = TriblerWallet(plebnet_settings.get_instance().wallets_testnet_created())
+    wallet = Wallet()
     c = cloudomate_providers['vps'][provider]
 
     configurations = c.get_options()
@@ -173,7 +173,7 @@ def place_offer(chosen_est_price, config):
     :param chosen_est_price: Target amount of BTC to receive
     :return: success of offer placement
     """
-    available_mb = market_controller.get_balance('MB')
+    available_mb = market_controller.get_mb_balance()
     if available_mb == 0:
         logger.log("No MB available")
         return False
